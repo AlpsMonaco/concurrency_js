@@ -1,5 +1,5 @@
 // usage :
-// C.add(asyncFuncProtype,...args)
+// C.add(asyncFuncPrototype,...args)
 // C.wait().then(()=>{console.log("all done")})
 // asyncFuncProtype must be a async func,otherwise there might be uncentain error.
 // look demo  for more detail.
