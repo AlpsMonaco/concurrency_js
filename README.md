@@ -8,6 +8,11 @@ C.wait().then(()=>{console.log("all done")})
 ```
 remember to resolve() in your async function other wise queue will be blocked.
 
+default concurreny num is 5
+```
+C.setMaxRunning(10) to change concurrency num.
+```
+
 // look demo  for more detail.
 
 ```
