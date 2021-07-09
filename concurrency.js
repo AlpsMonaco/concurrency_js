@@ -66,6 +66,11 @@ const C = (function () {
             }
         },
 
+        // call C.reset() before starting a new batch of async tasks if there are multi concurrency operations in the same time.
+        reset: function () {
+            iterator.reset()
+        },
+
         // set max concurrency
         setMaxRunning: function (num) {
             maxRunning = num
@@ -93,24 +98,24 @@ function demo() {
             let t = i
             C.add(timeToPrint, t)
         }
-    }, 100)
+    }, 1000)
 
     setTimeout(() => {
+        C.reset()
         for (let i = 1; i < 100; i = i + 5) {
-            let t = i
-            C.add(timeToPrint, t)
-        }
-    }, 2000)
-
-    setTimeout(() => {
-        for (let i = 1; i < 100; i = i + 3) {
             let t = i
             C.add(timeToPrint, t)
         }
     }, 5000)
 
+    setTimeout(() => {
+        C.reset()
+        for (let i = 1; i < 100; i = i + 3) {
+            let t = i
+            C.add(timeToPrint, t)
+        }
+    }, 10000)
 
-    C.wait().then(() => {
-        console.log("all done")
-    })
 }
+
+demo()
