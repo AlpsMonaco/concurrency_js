@@ -7,6 +7,7 @@
 const C = (function () {
     let maxRunning = 5
     let currentRunning = 0
+    let result = []
     let iterator = {
         queue: [], cursor: -1,
 
@@ -38,7 +39,11 @@ const C = (function () {
         for (; ;) {
             let o = iterator.next()
             if (!o) return
-            await o.f(...o.args)
+            let answer = await o.f(...o.args)
+            result.push({
+                "args": o.args,
+                "answer": answer
+            })
         }
     }
 
@@ -81,6 +86,11 @@ const C = (function () {
         // It makes sure that a new batch of async tasks work normally.
         reset: function () {
             iterator.reset()
+            result = []
+        },
+
+        getResult: function () {
+            return result
         },
 
         // set max concurrency
