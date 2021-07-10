@@ -143,5 +143,3 @@ function demo() {
     }, 10000)
 
 }
-
-demo()
