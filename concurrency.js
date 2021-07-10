@@ -1,5 +1,5 @@
 // usage :
-// C.add(asyncFuncPrototype,...args)
+// C.add(asyncFuncProtype,...args)
 // C.wait().then(()=>{console.log("all done")})
 // asyncFuncProtype must be a async func,otherwise there might be uncentain error.
 // look demo  for more detail.
@@ -23,19 +23,31 @@ const C = (function () {
         },
     }
 
-    function worker() {
-        setTimeout(() => {
+    async function work() {
+        for (; ;) {
             let o = iterator.next()
-            if (!o) {
-                currentRunning--
-                console.log("die")
-                return
-            }
+            if (!o) return
+            await o.f(...o.args)
+        }
+    }
 
-            o.f(...o.args).then((...args) => {
-                worker()
-            }).catch((e) => { console.error(e) })
-        }, 100)
+    function worker() {
+        work().then(() => {
+            currentRunning--
+            console.log("die")
+        })
+        // setTimeout(() => {
+        //     let o = iterator.next()
+        //     if (!o) {
+        //         currentRunning--
+        //         console.log("die")
+        //         return
+        //     }
+
+        //     o.f(...o.args).then((...args) => {
+        //         worker()
+        //     }).catch((e) => { console.error(e) })
+        // }, 100)
     }
 
     function newJob() {
@@ -84,36 +96,36 @@ const C = (function () {
 
 
 function demo() {
-    function timeToPrint(t) {
+    function timeToPrint(t, ex = "") {
         return new Promise((resolve, reject) => {
             setTimeout(() => {
-                console.log(t)
+                console.log(t, ex)
                 resolve()
-            })
+            }, t)
         })
     }
 
     setTimeout(() => {
-        for (let i = 1; i < 100; i++) {
+        for (let i = 1; i < 10000; i++) {
             let t = i
-            C.add(timeToPrint, t)
+            C.add(timeToPrint, t, "from 1")
         }
     }, 1000)
 
     setTimeout(() => {
-        C.reset()
-        for (let i = 1; i < 100; i = i + 5) {
+        for (let i = 1; i < 10000; i = i + 5) {
             let t = i
-            C.add(timeToPrint, t)
+            C.add(timeToPrint, t, "from 2")
         }
-    }, 5000)
+    }, 1000)
 
     setTimeout(() => {
-        C.reset()
-        for (let i = 1; i < 100; i = i + 3) {
+        for (let i = 1; i < 10000; i = i + 3) {
             let t = i
-            C.add(timeToPrint, t)
+            C.add(timeToPrint, t, "from 3")
         }
-    }, 10000)
+    }, 1000)
 
 }
+
+demo()
