@@ -18,8 +18,19 @@ const C = (function () {
             this.cursor = -1; this.queue = []
         },
 
+        nextCursor: function () {
+            let c = ++this.cursor
+            if (c > iterator.queue.length - 1) {
+                --this.cursor
+                return null
+            }
+
+            return c
+        },
+
         next: function () {
-            return ++this.cursor > iterator.queue.length - 1 ? null : iterator.queue[this.cursor]
+            let c = this.nextCursor()
+            return c === null ? null : iterator.queue[c]
         },
     }
 
@@ -36,18 +47,6 @@ const C = (function () {
             currentRunning--
             console.log("die")
         })
-        // setTimeout(() => {
-        //     let o = iterator.next()
-        //     if (!o) {
-        //         currentRunning--
-        //         console.log("die")
-        //         return
-        //     }
-
-        //     o.f(...o.args).then((...args) => {
-        //         worker()
-        //     }).catch((e) => { console.error(e) })
-        // }, 100)
     }
 
     function newJob() {
@@ -78,7 +77,8 @@ const C = (function () {
             }
         },
 
-        // call C.reset() before starting a new batch of async tasks if there are multi concurrency operations in the same time.
+        // call C.reset() to init C's internal iterator.
+        // It makes sure that a new batch of async tasks work normally.
         reset: function () {
             iterator.reset()
         },
@@ -105,26 +105,32 @@ function demo() {
         })
     }
 
+    function timeToPush(t, ex = "") {
+        setTimeout(() => {
+            C.add(timeToPrint, t, ex)
+        }, t)
+    }
+
     setTimeout(() => {
-        for (let i = 1; i < 10000; i++) {
+        for (let i = 1; i < 100; i++) {
             let t = i
-            C.add(timeToPrint, t, "from 1")
+            C.add(timeToPush, t, "from 1")
         }
     }, 1000)
 
     setTimeout(() => {
-        for (let i = 1; i < 10000; i = i + 5) {
+        for (let i = 1; i < 100; i = i + 5) {
             let t = i
-            C.add(timeToPrint, t, "from 2")
+            C.add(timeToPush, t, "from 2")
         }
-    }, 1000)
+    }, 5000)
 
     setTimeout(() => {
-        for (let i = 1; i < 10000; i = i + 3) {
+        for (let i = 1; i < 100; i = i + 3) {
             let t = i
-            C.add(timeToPrint, t, "from 3")
+            C.add(timeToPush, t, "from 3")
         }
-    }, 1000)
+    }, 10000)
 
 }
 
