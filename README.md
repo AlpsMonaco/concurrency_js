@@ -3,7 +3,7 @@ a js file that implement concurrency async operation which could limit concurren
 
 usage :
 ```
-C.add(asyncFuncProtype,...args)
+C.add(asyncFuncPrototype,...args)
 C.wait().then(()=>{console.log("all done")})
 ```
 remember to resolve() in your async function other wise queue will be blocked.
